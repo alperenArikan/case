@@ -3,6 +3,7 @@ import { deleteContent, updateContent } from "../store/todoSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
@@ -20,6 +21,7 @@ import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import style from "./TodoCard.module.css";
 import { v4 } from "uuid";
 import AddIcon from "@material-ui/icons/Add";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 
 const useStyles = makeStyles({
     root: {
@@ -47,6 +49,9 @@ const useStyles = makeStyles({
     done: {
         color: "red",
         textDecoration: "line-through",
+    },
+    header: {
+        padding: "0",
     },
 });
 
@@ -124,6 +129,22 @@ function SimpleCard({ data }) {
             })
         );
     };
+
+    const handleDeleteTodo = (id) => {
+        const todos = [...data.todos];
+
+        const clearedTodos = todos.filter((todo) => {
+            return todo.id !== id;
+        });
+        dispatch(
+            updateContent({
+                id: data.id,
+                changes: {
+                    todos: [...clearedTodos],
+                },
+            })
+        );
+    };
     return (
         <Card
             onMouseEnter={mouseEnterHandler}
@@ -162,6 +183,30 @@ function SimpleCard({ data }) {
                 </>
             ) : (
                 ""
+            )}
+            {data.type === "edit" && (
+                <>
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            padding: "0 .8rem 0 .8rem",
+                        }}
+                    >
+                        <IconButton
+                            onClick={deleteHandler}
+                            className={classes.button}
+                            aria-label="delete"
+                            style={{
+                                width: "1.8rem",
+                                height: "1.8rem",
+                            }}
+                        >
+                            <DeleteForeverIcon />
+                        </IconButton>
+                    </div>
+                    <Divider />
+                </>
             )}
             <CardContent className={classes.content}>
                 {data.type === "ready" ? (
@@ -243,6 +288,21 @@ function SimpleCard({ data }) {
                                             }
                                             primary={item.todo}
                                         />
+                                        <ListItemSecondaryAction>
+                                            <IconButton
+                                                onClick={() =>
+                                                    handleDeleteTodo(item.id)
+                                                }
+                                                className={classes.button}
+                                                aria-label="delete"
+                                                style={{
+                                                    width: "1.8rem",
+                                                    height: "1.8rem",
+                                                }}
+                                            >
+                                                <DeleteForeverIcon />
+                                            </IconButton>
+                                        </ListItemSecondaryAction>
                                     </ListItem>
                                 );
                             })}
@@ -274,7 +334,6 @@ function SimpleCard({ data }) {
                                 <IconButton
                                     style={{ width: "2rem", height: "2rem" }}
                                     type="submit"
-                                    aria-label="delete"
                                 >
                                     <AddIcon />
                                 </IconButton>
