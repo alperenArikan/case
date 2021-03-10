@@ -81,10 +81,10 @@ const Sidebar = () => {
     React.useEffect(() => {
         const name = localStorage.getItem("name");
         setName(name);
-        const pp = name.split(" ");
+        const pp = name?.split(" ");
 
         let letters = "";
-        pp.map((item) => {
+        pp?.map((item) => {
             letters += item[0];
         });
         setProfilePicture(letters);
@@ -115,24 +115,30 @@ const Sidebar = () => {
                     component="nav"
                     aria-label="main mailbox folders"
                 >
-                    {categories.map((item) => {
-                        return (
-                            <ListItem key={item} button>
-                                <ListItemIcon>
-                                    <Checkbox
-                                        inputProps={{
-                                            "aria-label": "primary checkbox",
-                                        }}
-                                        value={item}
-                                        onChange={handleSetFilter}
-                                    />
-                                </ListItemIcon>
-                                <ListItemText primary={item} />
-                            </ListItem>
-                        );
-                    })}
+                    {categories.length > 0 ? (
+                        categories.map((item) => {
+                            return (
+                                <ListItem key={item} button>
+                                    <ListItemIcon>
+                                        <Checkbox
+                                            inputProps={{
+                                                "aria-label":
+                                                    "primary checkbox",
+                                            }}
+                                            value={item}
+                                            onChange={handleSetFilter}
+                                        />
+                                    </ListItemIcon>
+                                    <ListItemText primary={item} />
+                                </ListItem>
+                            );
+                        })
+                    ) : (
+                        <ListItem button>
+                            <ListItemText primary="No category to show" />
+                        </ListItem>
+                    )}
                 </List>
-                ;
             </div>
         </div>
     );

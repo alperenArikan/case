@@ -5,6 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import Sidebar from "../components/Sidebar";
 import ContentArea from "../components/ContentArea";
+import { Redirect } from "react-router-dom";
 const Todo = () => {
     const loading = useSelector((state) => state.todoReducer.loading);
     const useStyles = makeStyles({
@@ -26,9 +27,11 @@ const Todo = () => {
             flexDirection: "row",
         },
     });
-
+    console.log(localStorage.getItem("name"));
     const classes = useStyles();
-
+    if (localStorage.getItem("name") === null) {
+        return <Redirect to="/" />;
+    }
     if (loading)
         return (
             <div className={classes.loadingContainer}>

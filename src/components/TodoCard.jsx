@@ -19,9 +19,11 @@ import CreateIcon from "@material-ui/icons/Create";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import style from "./TodoCard.module.css";
 import { v4 } from "uuid";
+import AddIcon from "@material-ui/icons/Add";
+
 const useStyles = makeStyles({
     root: {
-        minWidth: 275,
+        width: 260,
         margin: "1rem",
         position: "relative",
         height: "max-content",
@@ -55,6 +57,7 @@ function SimpleCard({ data }) {
     const [category, setCategory] = React.useState(data.category);
     const [addTodoValue, setAddTodoValue] = React.useState(data.title);
     const [title, setTitle] = React.useState(data.title);
+    const [showAlert, setShowAlert] = React.useState(false);
     const deleteHandler = () => {
         dispatch(deleteContent(data.id));
     };
@@ -72,6 +75,9 @@ function SimpleCard({ data }) {
         setMouseIn(false);
     };
     const handleUpdateTodo = () => {
+        if (data.todos.length === 0) {
+            return setShowAlert(true);
+        }
         dispatch(
             updateContent({
                 id: data.id,
@@ -79,6 +85,7 @@ function SimpleCard({ data }) {
             })
         );
         setAddTodoValue("");
+        setShowAlert(false);
     };
     const handleAddTodo = (e) => {
         e.preventDefault();
@@ -95,6 +102,7 @@ function SimpleCard({ data }) {
                 },
             })
         );
+        setShowAlert(false);
     };
     const handleCheckChange = (e, id) => {
         let todos = [...data.todos];
@@ -169,7 +177,7 @@ function SimpleCard({ data }) {
                         >
                             {data.todos.map((item) => {
                                 return (
-                                    <ListItem key={item.id} button>
+                                    <ListItem key={item.id}>
                                         <ListItemIcon>
                                             <Checkbox
                                                 inputProps={{
@@ -194,13 +202,15 @@ function SimpleCard({ data }) {
                     </>
                 ) : (
                     <>
-                        <TextField
-                            onChange={(e) => setTitle(e.target.value)}
-                            id="standard-basic"
-                            label="Title"
-                            value={title}
-                            autoFocus={true}
-                        />
+                        <div style={{ width: "100%" }}>
+                            <TextField
+                                onChange={(e) => setTitle(e.target.value)}
+                                id="standard-basic"
+                                label="Title"
+                                value={title}
+                                autoFocus={true}
+                            />
+                        </div>
                         <Divider />
                         <List
                             className={classes.listWrapper}
@@ -237,26 +247,67 @@ function SimpleCard({ data }) {
                                 );
                             })}
                         </List>
-                        <form
-                            style={{ marginBottom: "2rem" }}
-                            onSubmit={handleAddTodo}
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                width: "100%",
+                            }}
                         >
+                            <form
+                                style={{
+                                    display: "flex",
+                                    marginBottom: "1.5rem",
+                                    alignItems: "center",
+                                }}
+                                onSubmit={handleAddTodo}
+                            >
+                                <TextField
+                                    value={addTodoValue}
+                                    onChange={(e) =>
+                                        setAddTodoValue(e.target.value)
+                                    }
+                                    id="standard-basic"
+                                    label="Todo"
+                                    required
+                                />
+                                <IconButton
+                                    style={{ width: "2rem", height: "2rem" }}
+                                    type="submit"
+                                    aria-label="delete"
+                                >
+                                    <AddIcon />
+                                </IconButton>
+                            </form>
+                        </div>
+
+                        <Typography
+                            style={{
+                                display: showAlert ? "block" : "none",
+                                width: "100%",
+                                flexWrap: "wrap",
+                                fontSize: "9px",
+                                color: "red",
+                                marginTop: ".4rem",
+                            }}
+                            variant="caption"
+                        >
+                            *Yapılacaklar listesi boş. Lütfen bir şeyler yazın
+                            ve enter'a basın
+                        </Typography>
+                        <div style={{ width: "100%" }}>
                             <TextField
-                                value={addTodoValue}
-                                onChange={(e) =>
-                                    setAddTodoValue(e.target.value)
-                                }
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
                                 id="standard-basic"
-                                label="Todo"
+                                label="Category"
                             />
-                        </form>
-                        <TextField
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            id="standard-basic"
-                            label="Category"
-                        />
-                        <Button onClick={handleUpdateTodo} variant="contained">
+                        </div>
+                        <Button
+                            style={{ marginTop: "1.5rem" }}
+                            onClick={handleUpdateTodo}
+                            variant="contained"
+                        >
                             SAVE
                         </Button>
                     </>
